@@ -9,13 +9,32 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var equalbutton: UIButton!
     @IBOutlet weak var calcworkings: UILabel!
-    
     @IBOutlet weak var calcresults: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setCornerRadiusForButtons(in: view)
         clearAll()
+    }
+    
+    func setCornerRadiusForButtons(in view: UIView) {
+        for subview in view.subviews {
+            if let button = subview as? UIButton {
+                setCornerRadius(for: button)
+            } else {
+                setCornerRadiusForButtons(in: subview)
+            }
+        }
+    }
+
+    func setCornerRadius(for button: UIButton) {
+        let h=button.frame.height
+        let w=button.frame.width
+        let smaller=min(h,w)
+        button.layer.cornerRadius = smaller/2
+        button.clipsToBounds = true
     }
     
     var workings:String=""
