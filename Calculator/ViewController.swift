@@ -83,10 +83,48 @@ class ViewController: UIViewController {
     
     @IBAction func pressequals(_ sender: Any) {
         //addtoworkings(val:"=")
-        let exp=NSExpression(format:workings)
-        let result=exp.expressionValue(with:nil,context:nil) as! Double
-        let resultstr=formatoutput(result:result)
-        calcresults.text=resultstr
+        if(validinput()){
+            let checkforpercent=workings.replacingOccurrences(of:"%",with:"*0.01")
+            let exp=NSExpression(format:workings)
+            let result=exp.expressionValue(with:nil,context:nil) as! Double
+            let resultstr=formatoutput(result:result)
+            calcresults.text=resultstr
+        }else{
+            let alert=UIAlertController(
+                title:"Invalid Input",
+                message:"Calculator cannot evaluate input",
+                preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title:"Okay",style: .default))
+            self.present(alert,animated:true,completion:nil)
+        }
+    }
+    
+    func validinput() ->Bool{
+        var count=0;
+        var funccharindexes=[Int]()
+        for char in workings{
+            if(specialchar(char:char)){
+                funccharindexes.append(count)
+            }
+            count+=1
+        }
+        var previous:Int = -1
+        for index in funccharindexes{
+            if(index==0){return false}
+            if(index==workings.count-1){return false}
+            if(previous != -1){
+                if(index-previous==1){
+                    return false
+                }
+            }
+            previous=index
+        }
+        return true
+    }
+    
+    func specialchar(char: Character) ->Bool{
+        if(char=="*"||char=="/"||char=="+"||char=="-"){return true}
+        return false
     }
     
     func formatoutput(result:Double) -> String{
